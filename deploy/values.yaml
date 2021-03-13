@@ -1,0 +1,49 @@
+# Default values for template app.
+
+name: template-app
+
+replicaCount: 2
+minReadySeconds: 10
+periodSeconds: 3
+livenessProbe: test
+
+rollingUpdate:
+  enabled: true
+  maxUnavailable: 0
+  maxSurge: 25%
+
+image:
+  pullPolicy: IfNotPresent
+  repository: jcastro32/template-app
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 3000
+
+container:
+  port: 3000
+
+hpa:
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    name: cpu
+    target:
+      type: Utilization
+      averageUtilization: 70
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
+
+autoscaling:
+  enabled: true
+
+ingress:
+  defaultName: ingress-nginx-controller
+  enabled: true
